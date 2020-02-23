@@ -1,0 +1,7 @@
+---
+- hosts: db_slave
+  become: yes
+  roles:
+    - server_common
+    - db
+    - db_slave

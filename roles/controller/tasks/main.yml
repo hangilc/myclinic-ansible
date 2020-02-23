@@ -1,0 +1,79 @@
+---
+- name: install packages
+  apt: "name={{ item }} state=present"
+  loop:
+    - vim
+    - tree
+    
+- name: set git config user.name
+  become: no
+  git_config:
+    name: user.name
+    value: "{{ git_user_name}}"
+    scope: global
+    
+- name: set git config user.email
+  become: no
+  git_config:
+    name: user.email
+    value: "{{ git_user_email}}"
+    scope: global
+
+- name: copy .vimrc
+  become: no
+  copy:
+    src: files/vimrc
+    dest: ~/.vimrc
+
+- name: create mysql-data directory
+  become: no
+  file:
+    path: ~/mysql-data
+    state: directory
+    mode: '700'
+    
+- name: download base sql data
+  become: no
+  get_url:
+    url: https://myclinic-files.s3-ap-northeast-1.amazonaws.com/{{ item }}
+    dest: ~/mysql-data/{{ item }}
+    mode: 0600
+  loop: ["mysql-base-data.sql", "mock-data.sql"]
+
+- name: install mysql-client package
+  apt:
+    name: mysql-client
+    state: present
+
+- name: install pymysql
+  become: yes
+  pip:
+    executable: pip3
+    name: "{{ item }}"
+    state: present
+  loop:
+    - pymysql
+    - boto3
+
+- name: install go
+  snap:
+    name: go
+    classic: yes
+    channel: "1.13/stable"
+    state: present
+
+- name: clone crypt-file.git
+  become: no
+  git:
+    repo: git@github.com:hangilc/crypt-file.git
+    accept_hostkey: yes
+    dest: ~/crypt-file
+
+- name: instal crypt-file
+  become: no
+  shell:
+    chdir: ~/crypt-file/cmd/crypt-file
+    cmd: go install
+    creates: ~/go/bin/crypt-file
+
+

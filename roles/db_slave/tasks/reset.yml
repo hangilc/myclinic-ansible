@@ -1,0 +1,10 @@
+---
+- name: reset slave
+  become: no
+  delegate_to: localhost
+  mysql_replication:
+    mode: resetslave
+    login_host: "{{ inventory_hostname }}"
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+

@@ -1,0 +1,62 @@
+---
+- name: dump sql data
+  become: no
+  delegate_to: localhost
+  shell: >
+    mysqldump -h {{ master_host }} -u {{ mysql_admin_user }}
+    -p{{ mysql_admin_pass}} --single-transaction --master-data
+    myclinic >/tmp/dump.sql
+
+- name: stop slave
+  become: no
+  mysql_replication:
+    mode: stopslave
+    login_host: "{{ inventory_hostname }}"
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+  tags: dev
+
+- name: reset slave
+  become: no
+  mysql_replication:
+    mode: resetslave
+    login_host: "{{ inventory_hostname }}"
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+
+- name: change master to
+  mysql_replication:
+    mode: changemaster
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+    master_host: "{{ master_host }}"
+    master_user: "{{ mysql_admin_user }}"
+    master_password: "{{ mysql_admin_pass }}"
+
+- name: upload data
+  become: no
+  delegate_to: localhost
+  connection: local
+  mysql_db: 
+    name: myclinic
+    login_host: "{{ inventory_hostname }}"
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+    encoding: "utf8"
+    state: import
+    target: /tmp/dump.sql
+
+- name: delete tmp data
+  become: no
+  delegate_to: localhost
+  file:
+    path: /tmp/dump.sql
+    state: absent
+  tags: dev
+
+- name: start slave
+  mysql_replication:
+    mode: startslave
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+

@@ -1,0 +1,4 @@
+---
+- import_playbook: db-master.yml
+- import_playbook: db-slave.yml
+

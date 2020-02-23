@@ -1,0 +1,39 @@
+---
+- hosts: controller
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/aws
+  become: no
+  tasks:
+    - name: list for this month
+      aws_s3:
+        bucket: "{{ myclinic_backup_s3_bucket }}"
+        region: "{{ myclinic_backup_s3_region }}"
+        prefix: "{{ lookup('pipe', 'date +%Y-%m') }}"
+        mode: list
+      register: bucket_prefix_this_month
+    - name: list for last month
+      aws_s3:
+        bucket: "{{ myclinic_backup_s3_bucket }}"
+        region: "{{ myclinic_backup_s3_region }}"
+        prefix: "{{ lookup('pipe', 'date -d \"last month\" +%Y-%m') }}"
+        mode: list
+      register: bucket_prefix_last_month
+    - name: download backup file
+      vars:
+        backup: "{{ bucket_prefix_last_month.s3_keys | append_list(bucket_prefix_this_month.s3_keys) | filter_by_glob('*.cf') | sort_list | last }}"
+      aws_s3:
+        bucket: "{{ myclinic_backup_s3_bucket }}"
+        object: "{{ backup }}"
+        region: "{{ myclinic_backup_s3_region }}"
+        mode: get 
+        dest: "~/mysql-data/{{ backup | replace_char('/', '_') }}"
+    - name: report saved file
+      debug:
+        msg: saved file to ~/mysql-data/{{ backup | replace_char('/', '_') }}
+      vars:
+        backup: "{{ bucket_prefix_last_month.s3_keys | append_list(bucket_prefix_this_month.s3_keys) | filter_by_glob('*.cf') | sort_list | last }}"
+
+
+

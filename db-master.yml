@@ -1,0 +1,9 @@
+---
+- hosts: db_master
+  name: setup mysql master
+  roles:
+    - server_common
+    - db
+    - db_master
+
+

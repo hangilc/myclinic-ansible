@@ -1,0 +1,5 @@
+---
+mysql_admin_user: "{{ lookup('env', 'MYCLINIC_DB_ADMIN_USER') }}"
+mysql_admin_pass: "{{ lookup('env', 'MYCLINIC_DB_ADMIN_PASS') }}"
+mysql_staff_user: "{{ lookup('env', 'MYCLINIC_DB_USER') }}"
+mysql_staff_pass: "{{ lookup('env', 'MYCLINIC_DB_PASS') }}"

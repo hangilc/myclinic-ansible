@@ -1,0 +1,88 @@
+# vars:
+#   from_file: SQL-FILE
+#   from_host: DB-HOST
+#
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: check master host
+      fail:
+        msg: No master host is available.
+      when: master_host is not defined or master_host == ""
+
+- hosts: db_slave
+  name: stop and reset slaves
+  tasks:
+    - include_role: 
+        name: db_slave
+        tasks_from: "{{ item }}"
+      loop:
+        - stop
+        - reset
+
+- hosts: db_master
+  name: reset master
+  tasks:
+    - include_role:
+        name: db_master
+        tasks_from: reset
+  
+- hosts: db_master
+  name: upload data (from_file)
+  tasks:
+    - include_role:
+        name: db_master
+        tasks_from: load_from_file
+      vars:
+        data_file: "{{ from_file }}"
+      when: from_file is defined
+
+- hosts: db_master
+  name: upload data (from_host)
+  tasks:
+    - include_role:
+        name: db_master
+        tasks_from: load_from_host
+      when: from_host is defined
+
+- hosts: db_slave
+  name: restart slaves
+  tasks:
+    - name: create temp file
+      delegate_to: localhost
+      become: no
+      run_once: yes
+      tempfile:
+        suffix: .sql
+        state: file
+      register: tempfile
+      tags: download_for_replication
+
+    - name: download master data
+      run_once: yes
+      include_role:
+        name: db_slave
+        tasks_from: download_from_master
+      vars:
+        dest: "{{ tempfile.path }}"
+      tags: download_for_replication
+
+    - name: upload to slaves
+      include_role:
+        name: db_slave
+        tasks_from: restart
+      vars:
+        data_file: "{{ tempfile.path }}"
+      tags: download_for_replication
+
+    - name: delete temp file
+      delegate_to: localhost
+      become: no
+      run_once: yes
+      file:
+        path: "{{ tempfile.path }}"
+        state: absent
+      tags: download_for_replication
+
+

@@ -1,0 +1,3 @@
+---
+master_host: "{{ groups.db_master[0] | default('') }}"
+

@@ -1,0 +1,35 @@
+# vars:
+#   from_host: MYSQL-HOST
+#
+---
+- name: create temp file
+  tempfile:
+    suffix: .sql
+    state: file
+  register: tempfile
+
+- name: download data
+  delegate_to: localhost
+  become: no
+  mysql_db:
+    name: myclinic
+    login_host: "{{ from_host }}"
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+    single_transaction: yes
+    state: dump
+    target: "{{ tempfile.path }}"
+
+- name: upload data
+  include_tasks: load_from_file.yml
+  vars:
+    data_file: "{{ tempfile.path }}"
+
+- name: delete temp file
+  file:
+    path: "{{ tempfile.path }}"
+    state: absent
+  when: tempfile.path is defined
+  tags: delete_temp_file
+   
+    

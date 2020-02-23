@@ -1,0 +1,17 @@
+# vars:
+#   master_host: MYSQL-MASTER
+#   data_file: DUMP-DATA-FILE
+#
+---
+- name: change master to
+  include_tasks: change_master_to.yml
+
+- name: upload to slave
+  include_role:
+    name: db
+    tasks_from: upload
+  
+- name: start slave
+  include_tasks: start.yml
+
+

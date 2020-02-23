@@ -1,0 +1,14 @@
+# vars:
+#   master_host: MYSQL-MASTER
+#   dest: PATH-TO-FILE
+#
+---
+- name: download from master for replication
+  become: no
+  delegate_to: localhost
+  shell: >
+    mysqldump -h {{ master_host }} -u {{ mysql_admin_user }}
+    -p{{ mysql_admin_pass}} --single-transaction --master-data
+    myclinic >{{ dest }}
+  tags: download_for_replication
+

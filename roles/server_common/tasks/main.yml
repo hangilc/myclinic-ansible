@@ -1,0 +1,24 @@
+---
+- name: wait for apt daily tasks to end
+  shell: ps ax | grep apt | wc -l
+  register: apt_daily_result
+  until: apt_daily_result.stdout == "2"
+  retries: 10
+  delay: 5
+  tags: wait_for_apt_daily
+
+- name: disable cloud-init
+  become: yes
+  copy:
+    dest: /etc/cloud/cloud-init.disabled
+    content: ""
+
+- name: modify LS_COLORS
+  become: no
+  lineinfile:
+    dest: ~/.bashrc
+    regexp: '^export LS_COLORS='
+    line: 'export LS_COLORS=$LS_COLORS:''di=1;32:'''
+
+
+

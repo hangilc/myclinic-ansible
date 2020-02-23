@@ -1,0 +1,14 @@
+[controller]
+localhost
+
+[db_master]
+;192.168.11.51
+
+[db_slave]
+;192.168.11.52 server_id=2
+
+[db:children]
+db_master
+db_slave
+
+

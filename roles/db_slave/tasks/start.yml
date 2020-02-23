@@ -1,0 +1,10 @@
+---
+- name: stop slave
+  become: no
+  delegate_to: localhost
+  mysql_replication:
+    mode: startslave
+    login_host: "{{ inventory_hostname }}"
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+

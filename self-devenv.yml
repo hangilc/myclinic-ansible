@@ -1,0 +1,10 @@
+---
+- hosts: controller
+  connection: local
+  become: yes
+  tasks:
+    - name: install visual studio code
+      snap:
+        name: code
+        classic: yes
+

@@ -1,0 +1,19 @@
+---
+- name: set mysql cnf
+  become: yes
+  template:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    src: templates/mysqld-slave.cnf
+  
+- name: restart mysql
+  become: yes
+  service: name=mysql state=restarted
+
+#- name: change master to
+#  include: "start_slave.yml"
+#  vars:
+#    master_host: "{{ groups.db_master[0] }}"
+#  when: groups.db_master[0] is defined
+
+
+

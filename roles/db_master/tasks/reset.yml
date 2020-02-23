@@ -1,0 +1,11 @@
+---
+- name: reset db master
+  become: no
+  delegate_to: localhost
+  command: >
+    mysql -h {{ inventory_hostname }} -u {{ mysql_admin_user }}
+    -p{{ mysql_admin_pass}} 
+    -e "reset master"
+    myclinic
+
+

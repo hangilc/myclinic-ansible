@@ -1,0 +1,12 @@
+# vars:
+#   master_host: MYSQL-MASTER
+#
+---
+- name: change master to
+  mysql_replication:
+    mode: changemaster
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+    master_host: "{{ master_host }}"
+    master_user: "{{ mysql_admin_user }}"
+    master_password: "{{ mysql_admin_pass }}"

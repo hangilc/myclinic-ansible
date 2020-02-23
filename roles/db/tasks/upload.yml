@@ -1,0 +1,16 @@
+# vars:
+#   data_file: PATH-TO-DATA-FILE
+#
+---
+- name: upload data
+  become: no
+  delegate_to: localhost
+  mysql_db: 
+    name: myclinic
+    login_host: "{{ inventory_hostname }}"
+    login_user: "{{ mysql_admin_user }}"
+    login_password: "{{ mysql_admin_pass }}"
+    encoding: "utf8"
+    state: import
+    target: "{{ data_file }}"
+
