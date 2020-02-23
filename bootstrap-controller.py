@@ -21,23 +21,23 @@ def set_env(key, value):
         f.write(content)
 
 def handle_secrets(yml):
-#    if "id_vm.pub" in yml:
-#        put_file("~/.ssh/id_vm.pub", yml["id_vm.pub"], 0o644)
-#        put_file("~/.ssh/authorized_keys", yml["id_vm.pub"], 0o600)
-#    if "id_vm" in yml:
-#        put_file("~/.ssh/id_vm", yml["id_vm"], 0o600)
-#    if "vault-password.txt" in yml:
-#        put_file("~/.ansible/vault-password.txt", 
-#                yml["vault-password.txt"],
-#                0o600)
-#    if "crypt-file-key.txt" in yml:
-#        put_file("~/.crypt-file/key.txt",
-#                yml["crypt-file-key.txt"],
-#                0o600)
-#    if "AWS_ACCESS_KEY_ID" in yml:
-#        set_env("AWS_ACCESS_KEY_ID", yml["AWS_ACCESS_KEY_ID"])
-#    if "AWS_SECRET_ACCESS_KEY" in yml:
-#        set_env("AWS_SECRET_ACCESS_KEY", yml["AWS_SECRET_ACCESS_KEY"])
+    if "id_vm.pub" in yml:
+        put_file("~/.ssh/id_vm.pub", yml["id_vm.pub"], 0o644)
+        put_file("~/.ssh/authorized_keys", yml["id_vm.pub"], 0o600)
+    if "id_vm" in yml:
+        put_file("~/.ssh/id_vm", yml["id_vm"], 0o600)
+    if "vault-password.txt" in yml:
+        put_file("~/.ansible/vault-password.txt", 
+                yml["vault-password.txt"],
+                0o600)
+    if "crypt-file-key.txt" in yml:
+        put_file("~/.crypt-file/key.txt",
+                yml["crypt-file-key.txt"],
+                0o600)
+    if "AWS_ACCESS_KEY_ID" in yml:
+        set_env("AWS_ACCESS_KEY_ID", yml["AWS_ACCESS_KEY_ID"])
+    if "AWS_SECRET_ACCESS_KEY" in yml:
+        set_env("AWS_SECRET_ACCESS_KEY", yml["AWS_SECRET_ACCESS_KEY"])
     if "git_user_name" in yml:
         name = yml["git_user_name"]
         subprocess.run(["git", "config", "--global", "user.name", name])
