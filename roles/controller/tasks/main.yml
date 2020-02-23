@@ -5,20 +5,6 @@
     - vim
     - tree
     
-- name: set git config user.name
-  become: no
-  git_config:
-    name: user.name
-    value: "{{ git_user_name}}"
-    scope: global
-    
-- name: set git config user.email
-  become: no
-  git_config:
-    name: user.email
-    value: "{{ git_user_email}}"
-    scope: global
-
 - name: copy .vimrc
   become: no
   copy:

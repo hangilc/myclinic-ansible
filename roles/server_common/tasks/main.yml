@@ -1,12 +1,4 @@
 ---
-- name: wait for apt daily tasks to end
-  shell: ps ax | grep apt | wc -l
-  register: apt_daily_result
-  until: apt_daily_result.stdout == "2"
-  retries: 10
-  delay: 5
-  tags: wait_for_apt_daily
-
 - name: disable cloud-init
   become: yes
   copy:
@@ -20,5 +12,17 @@
     regexp: '^export LS_COLORS='
     line: 'export LS_COLORS=$LS_COLORS:''di=1;32:'''
 
+- name: wait for apt lock
+  shell: ps ax | grep '.systemd.daily lock_is_held' | wc -l
+  register: apt_lock_result
+  until: apt_lock_result.stdout != "3"
+  delay: 20
+  retries: 60
+  tags: wait_for_apt_lock
 
+- name: apt update and upgrade
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: full
 

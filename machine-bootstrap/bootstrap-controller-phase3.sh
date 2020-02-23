@@ -18,4 +18,5 @@ if [ ! -f /etc/ansible/hosts ]; then
 	sudo chmod 660 /etc/ansible/hosts
 fi
 
+echo "Copy inventory.sample to /etc/ansible/hosts"
 
