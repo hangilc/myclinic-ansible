@@ -39,3 +39,6 @@ read -p "Put ~/myclinic-secrets.yml, then hit ENTER"
 if [ -f ~/myclinic-secrets.yml ]; then
 	python3 bootstrap-controller.py
 fi
+
+echo "Logout, login, and proceed to phase 3."
+
