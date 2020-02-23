@@ -13,6 +13,10 @@ fi
 sudo apt install -y software-properties-common python3-pip python3-venv
 sudo -H pip3 install ansible pyyaml
 
+# install git
+
+sudo apt install -y git
+
 # install secrets
 
 if [ ! -d ~/.ssh ]; then
