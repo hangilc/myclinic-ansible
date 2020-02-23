@@ -18,13 +18,10 @@ sudo apt install -y ssh vim
 
 # install Guest Additions
 
-function prep_for_guest_addition() {
-    read -p "Install VirtualBox Guest Addtions? [y/n]: " yn
-    if [ $yn == "y" ]; then
-        sudo apt install -y gcc perl make
-        echo "################"
-        echo "Install guest additions, reboot, and move to phase2."
-        read
-    fi
-}
-
+read -p "Install VirtualBox Guest Addtions? [y/n]: " yn
+if [ $yn == "y" ]; then
+	sudo apt install -y gcc perl make
+	echo "################"
+	echo "Install guest additions, reboot, and move to phase2."
+	read
+fi
